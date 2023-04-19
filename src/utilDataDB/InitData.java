@@ -1,8 +1,9 @@
-package initData;
+package utilDataDB;
 
 
 import model.Film;
 import model.Genre;
+import model.Screening;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,6 +28,12 @@ public class InitData {
     } catch (IOException e) {
       System.out.println("Error read data, program is not initialized");
     }
+    int lastIdFilm = filmList.stream()
+        .mapToInt(Film::getIdFilm)
+        .summaryStatistics()
+        .getMax();
+    Film.setIdFilmLast(lastIdFilm);
+
     return filmList;
   }
 
@@ -34,17 +41,22 @@ public class InitData {
     String[] tempArray = Pattern.compile(";")
         .splitAsStream(line)
         .toArray(String[]::new);
-    String nameFilm = tempArray[0];
-    int year = Integer.parseInt(tempArray[1]);
-    String descriptons = tempArray[2];
-    Genre genre = Genre.valueOf(tempArray[3]);
+    int idFilm = Integer.parseInt(tempArray[0]);
+    String nameFilm = tempArray[1];
+    int year = Integer.parseInt(tempArray[2]);
+    String descriptions = tempArray[3];
+    Genre genre = Genre.valueOf(tempArray[4]);
     List<Integer> rating = Pattern.compile(",")
-        .splitAsStream(tempArray[4])
-        .map(i -> Integer.parseInt(i))
+        .splitAsStream(tempArray[5])
+        .map(Integer::parseInt)
         .collect(Collectors.toList());
-    Film result = new Film(nameFilm, year, descriptons, genre, rating);
+    return new Film(idFilm, nameFilm, year, descriptions, genre, rating);
+  }
 
-    return result;
+  public static List<Screening> initScreeningFromFile() {
+    List<Screening> screeningList = new ArrayList<>();
+
+    return screeningList;
   }
 
 }
